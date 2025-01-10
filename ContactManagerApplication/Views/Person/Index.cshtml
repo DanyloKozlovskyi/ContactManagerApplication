@@ -1,0 +1,31 @@
+﻿@model ICollection<Person>
+@{
+    ViewBag.Title = "Persons";
+}
+<form action="~/person/index" method="get">
+    <h1>People</h1>
+    <a href="~/person/upload" class="ml">Upload</a>
+    <table class="table w-100 mt persons">
+        <thead>
+            <tr>
+                <td>Name</td>
+                <td>DateOfBirth</td>
+                <td>Married</td>
+                <td>Phone Number</td>
+                <td>Salary</td>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (Person person in @Model)
+            {
+                <tr>
+                    <td>@person.Name</td>
+                    <td>@person.DateOfBirth</td>
+                    <td>@person.Married</td>
+                    <td>@person.PhoneNumber</td>
+                    <td>@person.Salary</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</form>

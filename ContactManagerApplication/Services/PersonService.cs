@@ -15,6 +15,17 @@ namespace ContactManagerApplication.Services
             this.dbContext = context;
             this.mapper = mapper;
         }
+
+        public async Task AddMany(IEnumerable<Person>? persons)
+        {
+            if (persons == null)
+            {
+                throw new ArgumentNullException(nameof(persons));
+            }
+            await dbContext.AddRangeAsync(persons);
+            await dbContext.SaveChangesAsync();
+        }
+
         public async Task<Person> Create(PersonCreate personCreate)
         {
             var person = mapper.Map<Person>(personCreate);
@@ -34,7 +45,7 @@ namespace ContactManagerApplication.Services
             await dbContext.SaveChangesAsync();
         }
 
-        public async Task<ICollection<Person>> GetAll()
+        public async Task<IEnumerable<Person>> GetAll()
         {
             return await dbContext.Persons.ToListAsync();
         }
