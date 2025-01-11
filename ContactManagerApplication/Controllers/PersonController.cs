@@ -35,12 +35,6 @@ namespace ContactManagerApplication.Controllers
             {
                 try
                 {
-                    var fileExtension = Path.GetExtension(file.FileName);
-                    if (fileExtension != ".csv")
-                    {
-                        ViewBag.Message = "Please upload a valid CSV file.";
-                        return View();
-                    }
                     var persons = new List<Person>();
                     using (var reader = new StreamReader(file.OpenReadStream()))
                     {
@@ -79,7 +73,6 @@ namespace ContactManagerApplication.Controllers
                         }
                     }
                     await personService.AddMany(persons);
-                    ViewBag.Message = "File uploaded and processed successfully.";
                     return RedirectToAction(nameof(Index), persons);
                 }
                 catch (Exception ex)
