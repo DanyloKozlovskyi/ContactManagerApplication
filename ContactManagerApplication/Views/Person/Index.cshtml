@@ -2,36 +2,118 @@
 @{
     ViewBag.Title = "Persons";
 }
-<form action="~/person/index" method="get">
-    <h1>People</h1>
-    <a href="~/person/upload" class="ml">Upload</a>
-    <table class="table w-100 mt persons">
-        <thead>
-            <tr>
-                <td>Name</td>
-                <td>DateOfBirth</td>
-                <td>Married</td>
-                <td>Phone Number</td>
-                <td>Salary</td>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (Person person in @Model)
-            {
+<h1>@ViewBag.Title</h1>
+<a href="~/person/upload" class="ml">Upload</a>
+<div class="box flex">
+<div class="flex-1">
+    <select id="filterSelect" class="form-input mb">
+        <option value="">Choose property to filter</option>
+        <option value="Name">Name</option>
+        <option value="DateOfBirth">Date of Birth</option>
+        <option value="Married">Married</option>
+        <option value="PhoneNumber">Phone Number</option>
+        <option value="Salary">Salary</option>
+    </select>
+</div>
+<div class="flex-1">
+    <input type="text" id="filterInput" class="form-input mb" placeholder="Filter by selected property" />
+</div> 
+</div>
+
+<table class="table w-100 mt persons" id="personTable">
+    <thead>
+        <tr>
+            <th><a href="#" class="sortable" data-column="0">Name</a></th>
+            <th><a href="#" class="sortable" data-column="1">Date of Birth</a></th>
+            <th><a href="#" class="sortable" data-column="2">Married</a></th>
+            <th><a href="#" class="sortable" data-column="3">Phone Number</a></th>
+            <th><a href="#" class="sortable" data-column="4">Salary</a></th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (Person person in @Model)
+        {
                 <tr>
                     <td>@person.Name</td>
-                    <td>@person.DateOfBirth</td>
-                    <td>@person.Married</td>
+                    <td>@person.DateOfBirth.ToString("yyyy-MM-dd")</td>
+                    <td>@(person.Married ? "Yes" : "No")</td>
                     <td>@person.PhoneNumber</td>
                     <td>@person.Salary</td>
                     <td>
-                        <a asp-controller="Person" asp-action="Edit" 
-                    asp-route-id="@person.Id">Edit</a>
-                        <a asp-controller="Person" asp-action="Delete"
-                           asp-route-id="@person.Id">Delete</a>
+                        <a asp-controller="Person" asp-action="Edit" asp-route-id="@person.Id">Edit</a>
+                        <a asp-controller="Person" asp-action="Delete" asp-route-id="@person.Id">Delete</a>
                     </td>
                 </tr>
-            }
-        </tbody>
-    </table>
-</form>
+        }
+        @if (!Model.Any())
+        {
+                <tr>
+                    <td colspan="6" class="text-center">No persons found.</td>
+                </tr>
+        }
+    </tbody>
+</table>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const filterInput = document.getElementById('filterInput');
+        const filterSelect = document.getElementById('filterSelect');
+        const table = document.getElementById('personTable');
+        const rows = Array.from(table.querySelectorAll('tbody tr'));
+        let currentSortColumn = null;
+        let sortDirection = 1; 
+
+        filterInput.addEventListener('input', () => {
+            const filterValue = filterInput.value.toLowerCase();
+            const filterPropertyIndex = {
+                'Name': 0,
+                'DateOfBirth': 1,
+                'Married': 2,
+                'PhoneNumber': 3,
+                'Salary': 4
+            }[filterSelect.value];
+
+            if (filterPropertyIndex == null) return;
+
+            rows.forEach(row => {
+                const cellValue = row.cells[filterPropertyIndex].textContent.toLowerCase();
+                row.style.display = cellValue.includes(filterValue) ? '' : 'none';
+            });
+        });
+
+        document.querySelectorAll('.sortable').forEach(header => {
+            header.addEventListener('click', event => {
+                event.preventDefault();
+                const column = parseInt(header.dataset.column);
+
+                if (currentSortColumn === column) {
+                    sortDirection *= -1; 
+                } else {
+                    currentSortColumn = column;
+                    sortDirection = 1;
+                }
+
+                rows.sort((a, b) => {
+                    const aValue = a.cells[column].textContent.trim();
+                    const bValue = b.cells[column].textContent.trim();
+
+                    if (column === 1) { // DateOfBirth
+                        return sortDirection * (new Date(aValue) - new Date(bValue));
+                    }
+                    if (column === 4) { // Salary
+                        return sortDirection * (parseFloat(aValue) - parseFloat(bValue));
+                    }
+                    if (column === 2) { // Married
+                        return sortDirection * (aValue === 'Yes' ? -1 : 1);
+                    }
+
+                    return sortDirection * aValue.localeCompare(bValue);
+                });
+
+                const tbody = table.querySelector('tbody');
+                rows.forEach(row => tbody.appendChild(row));
+            });
+        });
+    });
+</script>
