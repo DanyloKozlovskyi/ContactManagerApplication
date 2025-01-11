@@ -49,16 +49,14 @@ namespace ContactManagerApplication.Controllers
                         {
                             var line = reader.ReadLine();
 
-                            // Skip the header row
                             if (isFirstRow)
                             {
                                 isFirstRow = false;
                                 continue;
                             }
-
                             var columns = line.Split(',');
 
-                            if (columns.Length != 5) // Validate number of columns
+                            if (columns.Length != 5)
                                 throw new FormatException("CSV format is invalid. Expected 5 columns.");
 
                             try
@@ -95,6 +93,53 @@ namespace ContactManagerApplication.Controllers
                 ViewBag.Message = "No file selected.";
                 return View();
             }
+        }
+        [HttpGet]
+        [Route("[action]/{id}")]
+        public async Task<IActionResult> Edit(Guid id)
+        {
+            var person = await
+                personService.GetById(id);
+            if (person == null)
+            {
+                return RedirectToAction(nameof(Index));
+            }
+            return View(person);
+        }
+        [HttpPost]
+        [Route("[action]/{id}")]
+        public async Task<IActionResult> Edit(Person person)
+        {
+            if (ModelState.IsValid)
+            {
+                var updatedPerson = await personService.Update(person);
+                return RedirectToAction(nameof(Index));
+            }
+            else
+            {
+                ViewBag.Errors = ModelState.Values.SelectMany(v => v.Errors).
+                    Select(e => e.ErrorMessage).ToList();
+                return View(nameof(Edit), nameof(Person));
+            }
+        }
+        [HttpGet]
+        [Route("[action]/{id}")]
+        public async Task<IActionResult> Delete(Guid id)
+        {
+            var person = await
+                 personService.GetById(id);
+            if (person == null)
+            {
+                return RedirectToAction(nameof(Index));
+            }
+            return View(person);
+        }
+        [HttpPost]
+        [Route("[action]/{id}")]
+        public async Task<IActionResult> Delete(Person person)
+        {
+            await personService.Delete(person.Id);
+            return RedirectToAction(nameof(Index));
         }
     }
 }
