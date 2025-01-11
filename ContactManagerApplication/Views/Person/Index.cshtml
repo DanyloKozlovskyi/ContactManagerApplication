@@ -24,6 +24,12 @@
                     <td>@person.Married</td>
                     <td>@person.PhoneNumber</td>
                     <td>@person.Salary</td>
+                    <td>
+                        <a asp-controller="Person" asp-action="Edit" 
+                    asp-route-id="@person.Id">Edit</a>
+                        <a asp-controller="Person" asp-action="Delete"
+                           asp-route-id="@person.Id">Delete</a>
+                    </td>
                 </tr>
             }
         </tbody>
