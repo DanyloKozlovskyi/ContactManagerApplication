@@ -1,0 +1,45 @@
+﻿@{
+    ViewBag.Title = "Upload";
+}
+
+<h2>@ViewBag.Title</h2>
+
+<form id="uploadForm" action="~/person/upload" method="post" enctype="multipart/form-data">
+    <div>
+        <label for="file">Choose CSV File:</label>
+        <input type="file" name="file" id="file" />
+        <span id="fileError" style="color: red;"></span>
+    </div>
+    <button type="submit">Upload</button>
+</form>
+
+<script>
+    document.getElementById("uploadForm").addEventListener("submit", function (event) {
+        let fileInput = document.getElementById("file");
+        let errorSpan = document.getElementById("fileError");
+        errorSpan.textContent = ""; // Clear previous error messages
+
+        // Check if a file is selected
+        if (!fileInput.value) {
+            errorSpan.textContent = "Please select a file.";
+            event.preventDefault(); // Prevent form submission
+            return;
+        }
+
+        // Validate file extension
+        let allowedExtensions = /(\.csv)$/i;
+        if (!allowedExtensions.exec(fileInput.value)) {
+            errorSpan.textContent = "Only .csv files are allowed.";
+            event.preventDefault(); // Prevent form submission
+            return;
+        }
+
+        // Optionally validate file size
+        let file = fileInput.files[0];
+        if (file && file.size > 2 * 1024 * 1024) { // 2 MB size limit
+            errorSpan.textContent = "File size must be less than 2 MB.";
+            event.preventDefault(); // Prevent form submission
+            return;
+        }
+    });
+</script>

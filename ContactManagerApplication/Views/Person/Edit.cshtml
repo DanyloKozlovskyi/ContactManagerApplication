@@ -1,0 +1,75 @@
+﻿@model Person
+@{
+    ViewBag.Title = "Edit Person";
+}
+
+<a asp-controller="Person" asp-action="Edit" class="link-hover">Back to People List</a>
+<h2>@ViewBag.Title</h2>
+<div class="w-50">
+    <form asp-controller="Person" asp-action="Edit" method="post">
+        @*Name*@
+        <div class="form-field flex">
+            <div class="w-25">
+                <label for="Name" class="form-label pt">Name</label>
+            </div>
+            <div class="flex-1">
+                <input asp-for="Name" class="form-input"/>
+                <span asp-validation-for="Name" class="text-red"></span>
+            </div>
+        </div>
+        @*DateOfBirth*@
+        <div class="form-field flex">
+            <div class="w-25">
+                <label for="DateOfBirth" class="form-label pt">Date of birth</label>
+            </div>
+            <div class="flex-1">
+                <input type="date" asp-for="DateOfBirth" class="form-input"/>
+                <span asp-validation-for="DateOfBirth" class="text-red"></span>
+            </div>
+        </div>
+        @*Married*@
+        <div class="form-field flex">
+            <div class="w-25">
+                <label class="form-label pt">Married</label>
+            </div>
+            <div class="flex-1">
+                <div>
+                    <input type="radio" asp-for="Married" value="true" id="MarriedYes" />
+                    <label for="MarriedYes">Yes</label>
+                </div>
+                <div>
+                    <input type="radio" asp-for="Married" value="false" id="MarriedNo" />
+                    <label for="MarriedNo">No</label>
+                </div>
+                <span asp-validation-for="Married" class="text-red"></span>
+            </div>
+        </div>
+        @*PhoneNumber*@
+        <div class="form-field flex">
+            <div class="w-25">
+                <label for="PhoneNumber" class="form-label pt">Phone number</label>
+            </div>
+            <div class="flex-1">
+                <input type="number" asp-for="PhoneNumber" class="form-input" />
+                <span asp-validation-for="PhoneNumber" class="text-red"></span>
+            </div>
+        </div>
+        @*Salary*@
+        <div class="form-field flex">
+            <div class="w-25">
+                <label for="Salary" class="form-label pt">Salary</label>
+            </div>
+            <div class="flex-1">
+                <input asp-for="Salary" class="form-input"/>
+                <span asp-validation-for="Salary" class="text-red"></span>
+            </div>
+        </div>
+        @*Submit*@
+        <div class="form-field flex">
+            <div class="flex-1">
+                <button class="button button-green-back">Edit</button>
+            </div>
+        </div>
+        <div asp-validation-summary="All"></div>
+    </form>
+</div>
